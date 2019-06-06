@@ -9,12 +9,24 @@ pip install -r requirements.txt
 python differential-comments.py --help
 ```
 
-### Authenticate to Phabricator
+### Configure
 
-Phabricator authentication should be automatic via your `~/.arcrc` credentials.
-You can test it out by searching for Phabricator projects that match a certain
-query string:
+Create a `settings_override.py`, and include the following:
 
 ```bash
-python differential-comments.py
+PHAB_BASE_URL = 'https://secure.phabricator.com'
+
+TEAM_EMAILS = [
+    'foo@example.com',
+]
+```
+
+If you want to specify a specific set of diff statues, you can define `DIFF_STATUS`.
+
+### List Comments
+
+Phabricator authentication should be automatic via your `~/.arcrc` credentials.
+
+```bash
+python differential-comments.py list
 ```

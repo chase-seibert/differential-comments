@@ -1,6 +1,15 @@
 PHAB_BASE_URL = 'https://secure.phabricator.com'
-PHAB_DEFAULT_PROJECT = None
-PHAB_AUTHORS = None
+
+TEAM_EMAILS = [
+    'foo@example.com',
+]
+
+DIFF_STATUS = [
+    'changes-planned',
+    'needs-review',
+    'needs-revision',
+    'accepted',
+]
 
 # allow custom over rides NOT checked in to git (in .gitignore)
 # to use, create a settings_override.py file and duplicate the
