@@ -3,6 +3,7 @@ from collections import Counter
 
 import colorama
 
+import cache
 import lib_phab
 import settings
 
@@ -16,7 +17,7 @@ def kwargs_or_default(setting_value):
 def list(args):
     author_phids = lib_phab.get_author_phids(settings.TEAM_EMAILS)
     counts = Counter()
-    for diff in lib_phab.get_diffs(author_phids, settings.DIFF_STATUS):
+    for diff in lib_phab.get_diffs(author_phids, args.days):
         # import ipdb; ipdb.set_trace()
         diff_phid = diff.get('id')
         fields = diff.get('fields')
@@ -44,19 +45,16 @@ def list(args):
 
 if __name__ == '__main__':
     colorama.init(autoreset=True)
+    cache.load()
     parser = argparse.ArgumentParser(prog='differential-comments')
     subparsers = parser.add_subparsers(help='sub-command help')
 
     parser_auth = subparsers.add_parser('list', help='List comments')
-    #parser_auth.add_argument('--server', help='Phabricator Server URL',
-    #    **kwargs_or_default(settings.PHAB_BASE_URL))
-    #parser_auth.add_argument('--project', help='Phabricator Server URL',
-    #    **kwargs_or_default(settings.PHAB_DEFAULT_PROJECT))
-    #parser_auth.add_argument('--author', help='Phabricator team PHID',
-    #    **kwargs_or_default(settings.PHAB_AUTHORS))
     parser_auth.add_argument('--emails', help='Phabricator team PHID',
         **kwargs_or_default(settings.TEAM_EMAILS))
+    parser_auth.add_argument('--days', help='How many days back to go')
     parser_auth.set_defaults(func=list)
 
     args = parser.parse_args()
     args.func(args)
+    cache.update()

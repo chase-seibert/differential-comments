@@ -1,4 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timedelta
+import time
 
 from phabricator import Phabricator
 
@@ -34,22 +35,20 @@ def get_author_phids(emails):
     return [d['phid'] for d in data]
 
 
-def get_diffs(author_phids, statuses):
+def get_diffs(author_phids, days=None):
     phab = Phabricator()
     constraints = {
         'authorPHIDs': author_phids,
-        'statuses': statuses,
-        #'createdStart':
-
     }
+    if settings.DIFF_STATUS:
+        constraints['statuses'] = settings.DIFF_STATUS
+    if days:
+        after = datetime.now() - timedelta(days=int(days))
+        constraints['createdStart'] = int(time.mktime(after.timetuple()))
     results = phab.differential.revision.search(
         constraints=constraints,
         #order='newest',
     )
-    # import ipdb; ipdb.set_trace()
-    # dateCreated 1559798204
-    # diffPHID
-    # title
     return results.get('data')
 
 
