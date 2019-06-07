@@ -27,19 +27,25 @@ def list(args):
         comments = lib_phab.get_comments(diff_phid, author_phids, diff_author_phid)
         if not comments:
             continue
-        print '=== %s ===' % (
-            lib_phab.phab_url('D%s' % diff_phid),
-        )
+        if not args.just_tally:
+            print '=== %s ===' % (
+                lib_phab.phab_url('D%s' % diff_phid),
+            )
         for comment in comments:
             comment_author = lib_phab.phid_to_name(comment.get('authorPHID'))
             comment_text = comment.get('comments')
-            print "> %s: @%s\n%s%s\n" % (
-                comment_author,
-                diff_author,
-                colorama.Fore.CYAN,
-                comment_text,
-            )
+            if not args.just_tally:
+                print "> %s: @%s\n%s%s\n" % (
+                    comment_author,
+                    diff_author,
+                    colorama.Fore.CYAN,
+                    comment_text,
+                )
             counts[comment_author] += 1
+            if args.just_tally:
+                print '.',
+    if args.just_tally:
+        print ''
     print counts
 
 
@@ -53,6 +59,7 @@ if __name__ == '__main__':
     parser_auth.add_argument('--emails', help='Phabricator team PHID',
         **kwargs_or_default(settings.TEAM_EMAILS))
     parser_auth.add_argument('--days', help='How many days back to go')
+    parser_auth.add_argument('--just-tally', help='Just print the final tally', action='store_true')
     parser_auth.set_defaults(func=list)
 
     args = parser.parse_args()
