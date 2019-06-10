@@ -53,15 +53,10 @@ if __name__ == '__main__':
     colorama.init(autoreset=True)
     cache.load()
     parser = argparse.ArgumentParser(prog='differential-comments')
-    subparsers = parser.add_subparsers(help='sub-command help')
-
-    parser_auth = subparsers.add_parser('list', help='List comments')
-    parser_auth.add_argument('--emails', help='Phabricator team PHID',
+    parser.add_argument('--emails', help='Phabricator team PHID',
         **kwargs_or_default(settings.TEAM_EMAILS))
-    parser_auth.add_argument('--days', help='How many days back to go')
-    parser_auth.add_argument('--just-tally', help='Just print the final tally', action='store_true')
-    parser_auth.set_defaults(func=list)
-
+    parser.add_argument('--days', help='How many days back to go')
+    parser.add_argument('--just-tally', help='Just print the final tally', action='store_true')
     args = parser.parse_args()
-    args.func(args)
+    list(args)
     cache.update()
