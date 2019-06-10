@@ -1,8 +1,12 @@
 PHAB_BASE_URL = 'https://secure.phabricator.com'
 
-TEAM_EMAILS = [
-    'foo@example.com',
-]
+TEAMS = {
+    'team1': [
+        'foo@example.com',
+    ],
+}
+
+DEFAULT_TEAM = 'team1'
 
 DIFF_STATUS = [
     'changes-planned',

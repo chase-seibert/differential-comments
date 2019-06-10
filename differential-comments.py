@@ -15,7 +15,10 @@ def kwargs_or_default(setting_value):
 
 
 def list(args):
-    team_phids = lib_phab.get_author_phids(settings.TEAM_EMAILS)
+    team_emails = settings.TEAMS.get(args.team)
+    if not team_emails:
+        raise Exception('No emails configured for team %s' % args.team)
+    team_phids = lib_phab.get_author_phids(team_emails)
     commentor_phids = team_phids
     if args.just_email:
         commentor_phids = lib_phab.get_author_phids([args.just_email, ])
@@ -58,8 +61,8 @@ if __name__ == '__main__':
     colorama.init(autoreset=True)
     cache.load()
     parser = argparse.ArgumentParser(prog='differential-comments')
-    parser.add_argument('--emails', help='Phabricator team PHID',
-        **kwargs_or_default(settings.TEAM_EMAILS))
+    parser.add_argument('--team', help='Which team from settings to use',
+        **kwargs_or_default(settings.DEFAULT_TEAM))
     parser.add_argument('--days', help='How many days back to go')
     parser.add_argument('--just-tally', help='Just print the final tally', action='store_true')
     parser.add_argument('--just-email', help='Just one user by email address')
