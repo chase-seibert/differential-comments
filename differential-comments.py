@@ -1,5 +1,6 @@
 import argparse
 from collections import Counter
+import sys
 
 import colorama
 
@@ -49,12 +50,14 @@ def list(args):
                 )
             counts[comment_author] += 1
             if args.just_tally:
-                print '.',
+                sys.stdout.write('.')
+                sys.stdout.flush()
     if args.just_tally:
         print ''
-    print '=== Totals ==='
+    print '=== Counts ==='
     for key, value in counts.items():
         print '%s: %s' % (key, value)
+    print 'Total: %s' % sum(counts.values())
 
 
 if __name__ == '__main__':
@@ -63,7 +66,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='differential-comments')
     parser.add_argument('--team', help='Which team from settings to use',
         **kwargs_or_default(settings.DEFAULT_TEAM))
-    parser.add_argument('--days', help='How many days back to go')
+    parser.add_argument('--days', help='How many days back to go', default=30)
     parser.add_argument('--just-tally', help='Just print the final tally', action='store_true')
     parser.add_argument('--just-email', help='Just one user by email address')
     args = parser.parse_args()
