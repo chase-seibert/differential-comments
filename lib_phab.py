@@ -61,8 +61,6 @@ def get_comments(phid, author_phids, exclude_author_phid, days=None):
     constraints = {
         'authorPHIDs': author_phids,
     }
-    if days:
-        constraints['createdStart'] = get_epoc_days_ago(days)
     transactions = phab.transaction.search(
         objectIdentifier='D%s' % phid,
         constraints=constraints,
@@ -70,6 +68,9 @@ def get_comments(phid, author_phids, exclude_author_phid, days=None):
     comments = []
     for transaction in transactions.get('data'):
         if not transaction.get('comments'):
+            continue
+        created = transaction.get('comments')[0].get('dateCreated')
+        if days and created < get_epoc_days_ago(days):
             continue
         author_phid = transaction.get('authorPHID')
         if author_phid == exclude_author_phid:
